@@ -61,7 +61,8 @@ class Ctrl{
 
         }).then(result => {
             console.log("getFoodScore", result)
-            score_info.score = base_score + result[0].total_score / result[0].count_number
+            score_info.score = (base_score * base_score_people + result[0].total_score) 
+                                / (result[0].count_number + base_score_people)
             score_info.count = base_score_people + result[0].count_number
             return res.tools.setJson(0, 'ok', score_info)
         }).catch(err => {
@@ -204,10 +205,10 @@ class Ctrl{
                     food_info.price = result[index].price 
                     food_info.shop_name = result[index].shop_name 
                     food_info.shop_address = result[index].shop_address 
-                    food_info.latitude = food_list[index].latitude 
-                    food_info.longitude = food_list[index].longitude
-                    base_score = food_list[index].base_score
-                    base_score_people = food_list[index].base_score_people
+                    food_info.latitude = result[index].latitude 
+                    food_info.longitude = result[index].longitude
+                    base_score = result[index].base_score
+                    base_score_people = result[index].base_score_people
                     // update recommed log
                     has_food = true
                     return this.model.saveRecommdRecord(uid, result[index].food_id)
@@ -220,8 +221,8 @@ class Ctrl{
                 // get like count and score
                 return Promise.all([this.model.getFoodScore(food_info.food_id),
                     this.model.getFoodPraiseCount(food_info.food_id),
-                    this.model.getUserFoodScore(uid, food_id),
-                    this.model.getUserFoodPraiseState(uid. food_id)
+                    this.model.getUserFoodScore(uid, food_info.food_id),
+                    this.model.getUserFoodPraiseState(uid, food_info.food_id)
                     ])
             }
             else            
@@ -231,7 +232,8 @@ class Ctrl{
             {
                 if(result[0][0].count_number != 0)
                 {
-                    food_info.score_info.score = base_score + result[0][0].total_score / result[0][0].count_number
+                    food_info.score_info.score = (base_score * base_score_people + result[0][0].total_score) 
+                                                / (result[0][0].count_number + base_score_people) 
                 }
                 else
                 {
