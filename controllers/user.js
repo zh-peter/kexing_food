@@ -103,6 +103,8 @@ class Ctrl{
 					console.log('openid:', info.openId)
 					body.nick_name = info.nickName
 					body.head_pic = info.avatarUrl
+					body.gender = info.gender
+					body.province = info.province
 				}
 				console.log(result)
 				if (result[0] && result[0].uid) {

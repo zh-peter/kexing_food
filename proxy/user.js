@@ -23,6 +23,8 @@ class Common{
 		const nick_name =  user_info.nick_name
 		const head_pic =  user_info.head_pic
 		const reg_time = user_info.reg_time
+		const gender = user_info.gender
+		const province = user_info.province
 		return this.query("insert into user_info (openid, nick_name, head_pic, reg_time) values(?, ?, ?, ?)", 
 			[openid, nick_name, head_pic, reg_time])
 	}
@@ -32,8 +34,9 @@ class Common{
 	}
 
 	updateUserInfo(user_info) {
-		return this.query("update user_info set nick_name = ?, head_pic = ? where openid= ?", 
-			[user_info.nick_name, user_info.head_pic, user_info.openid])
+		return this.query("update user_info set nick_name = ?, head_pic = ?, gender = ?, \
+		province = ? where openid= ?", 
+			[user_info.nick_name, user_info.head_pic, user_info.gender, user_info.province, user_info.openid])
 	}
 
 	getUserInfoById(id) {
