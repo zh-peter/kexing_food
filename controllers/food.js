@@ -61,7 +61,7 @@ class Ctrl{
 
         }).then(result => {
             console.log("getFoodScore", result)
-            score_info.score = (base_score * base_score_people + result[0].total_score) 
+            score_info.score = (base_score * base_score_people + Number(result[0].total_score)) 
                                 / (result[0].count_number + base_score_people)
             score_info.count = base_score_people + result[0].count_number
             return res.tools.setJson(0, 'ok', score_info)
@@ -232,7 +232,7 @@ class Ctrl{
             {
                 if(result[0][0].count_number != 0)
                 {
-                    food_info.score_info.score = (base_score * base_score_people + result[0][0].total_score) 
+                    food_info.score_info.score = (base_score * base_score_people + Number(result[0][0].total_score)) 
                                                 / (result[0][0].count_number + base_score_people) 
                 }
                 else

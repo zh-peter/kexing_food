@@ -72,7 +72,7 @@ class Ctrl{
 		{
 			return res.tools.setJson(1, 'code or encryptedData or iv is null')
 		}
-
+		var has_returned = false
 		const appid = config.wechat.appid
 		const nowTime = new Date().getTime() / 1000
 		body.reg_time = nowTime
@@ -81,6 +81,7 @@ class Ctrl{
 			console.log("session", result)
 			result = JSON.parse(result)
 			if (result && result.errmsg) {
+				has_returned = true
 				return res.tools.setJson(result.errcode, result.errmsg)	
 			}
 			if (result && result.openid) {
@@ -90,11 +91,10 @@ class Ctrl{
 			}
 		})
 		.then(result => {
-			console.log("save:", result)
-
 			console.log('sessionKey:', sessionKey)
 			if(sessionKey)
 			{
+				console.log("find:", result)
 				const pc = new WXBizDataCrypt(appid, sessionKey)
 				const info = pc.decryptData(enData , iv)
 				console.log('data:', info)
@@ -106,7 +106,6 @@ class Ctrl{
 					body.gender = info.gender
 					body.province = info.province
 				}
-				console.log(result)
 				if (result[0] && result[0].uid) {
 					body.uid = result[0].uid
 					return this.model.updateUserInfo(body)
@@ -116,10 +115,10 @@ class Ctrl{
 		})
 		.then(result =>
 		{
-			console.log('return:', result)
 			if(!body.uid && result)
 			{
-				body.uid = result.insertedId
+				console.log('return:', result)
+				body.uid = result.insertId
 			}
 			if (result) {
 				const token = res.jwt.setToken(body.uid)
@@ -129,8 +128,10 @@ class Ctrl{
 				uid: body.uid,
 				})
 			}
-			if(!sessionKey)
+			else if(!has_returned)
+			{
 				return res.tools.setJson(1, 'failed')
+			}
 
 		})
 		.catch(err => next(err))
